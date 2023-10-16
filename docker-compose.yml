@@ -19,12 +19,12 @@ services:
         environment:
             - MYSQL_ROOT_PASSWORD=password
             - MYSQL_DATABASE=database
-            - MYSQL_USER=root
             - MYSQL_PASSWORD=password
         ports:
             - '9002:3306'
 
     phpmyadmin:
+        container_name: "phpmyadmin_poll"
         image: 'phpmyadmin:latest'
         ports:
             - '8081:80'
@@ -33,6 +33,7 @@ services:
         environment:
             - PMA_HOST=mysql
             - PMA_PORT=3306
+            - MYSQL_ROOT_PASSWORD=password
         depends_on:
             - mysql
 
@@ -40,7 +41,7 @@ services:
         container_name: "nginx_php"
         networks:
             - php_network
-        image: 'nginx:alpine'
+        image: 'nginx:latest'
         working_dir: /application
         volumes:
             - '.:/application'
@@ -49,11 +50,13 @@ services:
             - '80:80'
 
     php-fpm:
-        container_name: "php"
+        container_name: "php_poll"
         networks:
             - php_network
         build: phpdocker/php-fpm
         working_dir: /application
+        depends_on:
+            - mysql
         volumes:
             - '.:/application'
             - './phpdocker/php-fpm/php-ini-overrides.ini:/etc/php/8.2/fpm/conf.d/99-overrides.ini'
