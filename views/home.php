@@ -20,7 +20,6 @@
         <ul class="list-group">
             <li class="list-group-item">
                 <a href="register" class="btn btn-primary"> Register </a>
-                <a href="user" class="btn btn-primary">User list </a>
                 <a href="login" class="btn btn-primary"> Log in </a>
             </li>
         </ul>
