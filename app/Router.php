@@ -10,9 +10,10 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\NoConfigurationException;
 
+
 class Router
 {
-    public function __invoke(RouteCollection $routes)
+    public function __invoke(RouteCollection $routes): void
     {
         $context = new RequestContext();
         $context->fromRequest(Request::createFromGlobals());
@@ -32,12 +33,17 @@ class Router
                 }
             });
 
-            // https://github.com/gmaccario/simple-mvc-php-framework/issues/2
             $className = '\\App\\Controllers\\' . $matcher['controller'];
             $classInstance = new $className();
 
-            // Add routes as paramaters to the next class
-            $params = array_merge(array_slice($matcher, 2, -1), array('routes' => $routes));
+            $request = Request::createFromGlobals();
+            // Add routes and request as parameters to the next class
+            $params = array_merge(array_slice($matcher, 2, -1),
+                array(
+                    'routes' => $routes,
+                    'request' => $request ?? null
+                )
+            );
 
             call_user_func_array(array($classInstance, $matcher['method']), $params);
 
