@@ -12,4 +12,7 @@ $routes->add('register/new', new Route(constant('URL_SUBFOLDER') . '/register/ne
 $routes->add('profile', new Route(constant('URL_SUBFOLDER') . 'profile', ['controller' => 'ProfileController', 'method'=>'showProfileForm'], []));
 $routes->add('login', new Route(constant('URL_SUBFOLDER') . 'login', ['controller' => 'LoginController', 'method'=>'showLoginForm'], []));
 $routes->add('login_authenticate', new Route(constant('URL_SUBFOLDER') . '/login/authenticate', ['controller' => 'LoginController', 'method' => 'authenticate'], []));
-
+$routes->add('survey', new Route(constant('URL_SUBFOLDER') . '/survey', ['controller' => 'SurveyController', 'method' => 'createSurveyForm'], []));
+$routes->add('survey/new', new Route(constant('URL_SUBFOLDER') . '/survey/new', ['controller' => 'SurveyController', 'method' => 'createSurvey'], []));
+$routes->add('create_question', new Route('/question/create', ['controller' => 'QuestionController', 'method' => 'createQuestion'], []));
+$routes->add('list_surveys', new Route(constant('URL_SUBFOLDER') . '/profile/list_surveys', ['controller' => 'ProfileController', 'method' => 'listSurveys'], []));

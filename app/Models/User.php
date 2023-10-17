@@ -9,10 +9,15 @@ use PDOException;
 class User
 {
 	protected int $id;
+
 	protected string $name;
+
 	protected string $email;
+
     protected string $password;
+
     protected DateTime $created_at;
+
     protected ?DateTime $updated_at = null;
 
     public function getId(): int
@@ -161,7 +166,6 @@ class User
 
         return null;
     }
-
 
     public function read(int $id)
     {
