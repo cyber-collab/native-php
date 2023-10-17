@@ -51,7 +51,7 @@ class QuestionController
         $question->setId($questionId);
         $question->delete();
 
-        header('Location: /'); // Перенаправление на главную страницу или другую страницу
+        header('Location: /');
         exit();
     }
 }
