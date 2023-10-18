@@ -16,6 +16,8 @@ class Survey
 
     protected string $status;
 
+    protected int $user_id;
+
     public function create(): void
     {
         $db = Database::getInstance();
@@ -75,14 +77,14 @@ class Survey
     {
         $db = Database::getInstance();
 
-        $sql = "SELECT * FROM surveys WHERE user_id = :user_id";
-        $params = [':user_id' => $userId];
+        $sql = "SELECT * FROM surveys WHERE user_id = :userId";
+        $params = [':userId' => $userId];
 
         try {
             $stmt = $db->getConnection()->prepare($sql);
             $stmt->execute($params);
 
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $stmt->fetchAll(PDO::FETCH_CLASS, 'App\\Models\\Survey');
         } catch (PDOException $e) {
             exit("Error: " . $e->getMessage());
         }

@@ -7,7 +7,6 @@
 </head>
 <body>
 <h1>List of Surveys</h1>
-<?php dump($surveys) ?>
 <?php if (empty($surveys)): ?>
     <p>No surveys found.</p>
 <?php else: ?>

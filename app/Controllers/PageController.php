@@ -11,7 +11,7 @@ class PageController
     // Homepage action
 	public function indexAction(RouteCollection $routes, ?Request $request)
 	{
-		$routeToProduct = str_replace('{id}', 1, $routes->get('user')->getPath());
+        $user = User::getCurrentUser();
 
         require_once APP_ROOT . '/views/home.php';
 	}
