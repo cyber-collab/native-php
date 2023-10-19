@@ -76,7 +76,6 @@ class SurveyController
             $answerTexts = $request->get('answer_text');
 
             foreach ($questionTexts as $questionId => $questionText) {
-
                 if ($questionId === 'new') {
                     $newQuestion = new Question();
                     $newQuestion->setQuestionText($questionText);
@@ -85,16 +84,16 @@ class SurveyController
                     $questionId = $newQuestion->getId();
                 } else {
                     $question = Question::getById($questionId);
-
                     if ($question) {
                         $question->setQuestionText($questionText);
                         $question->setSurveyId($id);
                         $question->update();
                     }
                 }
+
                 if (isset($answerTexts[$questionId]) && is_array($answerTexts[$questionId])) {
                     foreach ($answerTexts[$questionId] as $answerId => $answerText) {
-                        if ($answerId === 'new') {
+                        if (str_contains($answerId, 'new')) {
                             $newAnswer = new Answer();
                             $newAnswer->setQuestionId($questionId);
                             $newAnswer->setAnswerText($answerText);
@@ -107,6 +106,13 @@ class SurveyController
                             }
                         }
                     }
+                }
+            }
+            $deletedAnswers = $request->get('deleted_answers');
+            if (isset($deletedAnswers)) {
+                foreach ($deletedAnswers as $deletedAnswerId) {
+                    $deletedAnswer = Answer::getById($deletedAnswerId);
+                    $deletedAnswer?->delete();
                 }
             }
         }

@@ -7,7 +7,7 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<div class="container mt-5">
+<div class="container mt-5" id="questionsContainer">
     <h1>Edit Survey</h1>
     <form action="/survey/update/<?php echo $survey->getId(); ?>" method="post">
         <div class="form-group">
@@ -33,8 +33,8 @@
                     <label for="answer_text">Answer Text:</label>
                     <?php foreach ($question->getAnswers() as $answer): ?>
                         <div class="mb-3">
-                            <input type="text" name="answer_text[<?php echo $question->getId(); ?>][<?php echo $answer->getId(); ?>]" class="form-control" value="<?php echo $answer->answer_text; ?>">
-                            <button type="button" class="btn btn-danger remove-answer">Remove Answer</button>
+                            <input type="text"  name="answer_text[<?php echo $question->getId(); ?>][<?php echo $answer->getId(); ?>]" class="form-control answer-text" value="<?php echo $answer->answer_text; ?>">
+                            <button type="button" class="btn btn-danger remove-answer mt-2">Remove Answer</button>
                         </div>
                     <?php endforeach; ?>
                     <button type="button" class="btn btn-primary add-answer">Add Answer</button>
@@ -44,27 +44,38 @@
             </div>
         <?php endforeach; ?>
 
-        <button type="button" class="btn btn-primary add-question">Add Question</button>
-        <button type="submit" class="btn btn-success">Save Changes</button>
+        <div class="form-group mt-4">
+            <button type="button" class="btn btn-primary add-question mr-2">Add Question</button>
+            <button type="submit" class="btn btn-success">Save Changes</button>
+        </div>
     </form>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
 <script>
     $(document).ready(function() {
+        function generateUniqueId() {
+            return 'new_' + Date.now();
+        }
+
         $(document).on('click', '.add-question', function() {
             const questionsContainer = $('#questionsContainer');
+            const newQuestionId = generateUniqueId();
+            const newAnswerId = generateUniqueId();
+
             const newQuestionGroup = $(
                 '<div class="form-group question-group">' +
                 '<div class="mb-3"></div>' +
                 '<label for="question_text">Question Text:</label>' +
-                '<input type="text" name="question_text[]" class="form-control">' +
+                `<input type="text" name="question_text[${newQuestionId}]" class="form-control">` +
                 '<div class="form-group answers-group ml-3">' +
                 '<label for="answer_text">Answer Text:</label>' +
-                '<input type="text" name="answer_text[new][]" class="form-control">' +  // Updated name attribute
+                `<input type="text" name="answer_text[${newQuestionId}][${newAnswerId}]" class="form-control">` +
                 '<button type="button" class="btn btn-danger remove-answer">Remove Answer</button>' +
+                '<input type="hidden" name="deleted_answers[]" value="">' +
                 '</div>' +
                 '<div class="mt-2">' +
                 '<button type="button" class="btn btn-primary add-answer">Add Answer</button>' +
@@ -72,26 +83,45 @@
                 '</div>' +
                 '</div>'
             );
+
             questionsContainer.append(newQuestionGroup);
         });
 
         $(document).on('click', '.add-answer', function() {
-            const answersGroup = $(this).closest('.question-group').find('.answers-group');
-            const newAnswerInput = $(
-                '<div class="mb-3"></div>' +
-                '<input type="text" name="answer_text[new][]" class="form-control">' +  // Updated name attribute
-                '<button type="button" class="btn btn-danger remove-answer">Remove Answer</button>'
-            );
-            answersGroup.append(newAnswerInput);
-        });
+            const newAnswerId = generateUniqueId();
 
-        $(document).on('click', '.remove-answer', function() {
-            $(this).closest('.answers-group').find('input').last().remove();
-            $(this).remove();
+            const newAnswerInput = $(
+                '<div class="mb-3">' +
+                `<input type="text" name="answer_text[<?php echo $question->getId()?>][${newAnswerId}]" class="form-control">` +
+                '<button type="button" class="btn btn-danger remove-answer mt-2">Remove Answer</button>' +
+                '</div>'
+            );
+
+            const addAnswerButton = $(this).closest('.question-group').find('.add-answer');
+            addAnswerButton.before(newAnswerInput);
         });
 
         $(document).on('click', '.remove-question', function() {
             $(this).closest('.question-group').remove();
+        });
+
+        $(document).on('click', '.remove-answer', function() {
+            const answerText = $(this).siblings('.answer-text');
+            const nameAttribute = answerText.attr('name');
+
+            if (nameAttribute == null) {
+                $(this).closest('.mb-3').remove();
+            } else {
+                const match = nameAttribute.match(/\[(\d+)\]\[(\d+)\]/);
+
+                if (match) {
+                    const answerId = match[2];
+                    const deletedAnswersInput = $('<input type="hidden" name="deleted_answers[]">');
+                    deletedAnswersInput.val(answerId);
+
+                    $(this).closest('.mb-3').replaceWith(deletedAnswersInput);
+                }
+            }
         });
     });
 </script>
