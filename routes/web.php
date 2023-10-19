@@ -21,4 +21,5 @@ $routes->add('update_survey', new Route(constant('URL_SUBFOLDER') . '/survey/upd
 $routes->add('delete_survey', new Route(constant('URL_SUBFOLDER') . '/survey/delete/{id}', ['controller' => 'SurveyController', 'method' => 'deleteSurvey'], ['id' => '\d+']));
 $routes->add('logout', new Route(constant('URL_SUBFOLDER') . 'logout', ['controller' => 'ProfileController', 'method' => 'logout'], []));
 $routes->add('record_vote', new Route(constant('URL_SUBFOLDER') . 'record_vote', ['controller' => 'ProfileController', 'method' => 'recordVote'], []));
+$routes->add('all_surveys', new Route(constant('URL_SUBFOLDER') . '/all-surveys', ['controller' => 'PageController', 'method' => 'getAllSurveys'], []));
 

@@ -44,12 +44,6 @@ class ProfileController
         $questionId = (int) $request->get('question_id');
         $answerId = (int) $request->get('answer_id');
 
-        $currentUser = User::getCurrentUser();
-        if ($currentUser === null) {
-            echo "User not authenticated";
-            return;
-        }
-
         $question = Question::getById($questionId);
         $answer = Answer::getById($answerId);
 
@@ -65,7 +59,7 @@ class ProfileController
             echo "Error recording vote";
         }
     }
-    
+
     public function logout(RouteCollection $routes, ?Request $request): void
     {
        User::logout();

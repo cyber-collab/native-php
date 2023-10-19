@@ -6,6 +6,7 @@ use App\Models\Answer;
 use App\Models\Question;
 use App\Models\Survey;
 use App\Models\User;
+use JetBrains\PhpStorm\NoReturn;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouteCollection;
 
@@ -38,7 +39,6 @@ class SurveyController
                 $question->setSurveyId($survey->getId());
                 $question->setQuestionText($questionText);
                 $question->create();
-
                 if (isset($answerTexts[$questionIndex])) {
                     foreach ($answerTexts as $answerText) {
                         $answer = new Answer();
@@ -60,7 +60,7 @@ class SurveyController
         }
     }
 
-    public function editSurvey(RouteCollection $routes, Request $request, ?int $id): void
+    #[NoReturn] public function editSurvey(RouteCollection $routes, Request $request, ?int $id): void
     {
         $title = $request->get('title');
         $status = $request->get('status');
@@ -116,6 +116,8 @@ class SurveyController
                 }
             }
         }
+        header("Location: /profile/list_surveys", true, 200);
+        exit();
     }
 
     public function deleteSurvey(RouteCollection $routes, Request $request, int $id): void

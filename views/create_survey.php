@@ -43,7 +43,7 @@
                 '<input type="text" name="question_text[]" class="form-control">' +
                 '<div class="form-group answers-group ml-3">' +
                 '<label for="answer_text">Answer Text:</label>' +
-                '<input type="text" name="answer_text[[]" class="form-control">' +
+                '<input type="text" name="answer_text[]" class="form-control">' +
                 '<div class="mt-2">' +
                 '<button type="button" class="btn btn-danger remove-answer">Remove Answer</button>' +
                 '</div>' +
@@ -60,7 +60,7 @@
             const answersGroup = $(this).closest('.question-group').find('.answers-group');
             const newAnswerInput = $(
                 '<div class="mb-3"></div>' +
-                '<input type="text" name="answer_text[[]" class="form-control">' +
+                '<input type="text" name="answer_text[]" class="form-control">' +
                 '<button type="button" class="btn btn-danger remove-answer">Remove Answer</button>'
             );
             answersGroup.append(newAnswerInput);

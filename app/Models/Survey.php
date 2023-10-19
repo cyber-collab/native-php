@@ -111,6 +111,23 @@ class Survey
         }
     }
 
+    public static function getAllSurveys(): ?array
+    {
+        $db = Database::getInstance();
+
+        $sql = "SELECT * FROM surveys WHERE status = 'published'";
+
+        try {
+            $stmt = $db->getConnection()->prepare($sql);
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_CLASS, 'App\Models\Survey');
+            return ($results !== false) ? $results : null;
+        } catch (PDOException $e) {
+            exit("Error: " . $e->getMessage());
+        }
+    }
+
+
     public function setTitle(string $title): void
     {
         $this->title = $title;

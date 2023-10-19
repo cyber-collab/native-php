@@ -22,12 +22,15 @@
             <li class="list-group-item">
                 <a href="register" class="btn btn-primary"> Register </a>
                 <a href="login" class="btn btn-primary"> Log in </a>
+                <a href="all-surveys" class="btn btn-primary"> Surveys </a>
+
             </li>
         </ul>
         <?php else: ?>
             <ul class="list-group">
                 <li class="list-group-item">
                     <a href="profile" class="btn btn-primary"> Your profile </a>
+                    <a href="all-surveys" class="btn btn-primary"> Surveys </a>
                 </li>
             </ul>
         <?php endif; ?>
