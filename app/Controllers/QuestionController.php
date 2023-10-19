@@ -13,20 +13,6 @@ class QuestionController
         require_once APP_ROOT . '/views/question_form.php';
     }
 
-    public function createQuestion(RouteCollection $routes, Request $request): void
-    {
-        $surveyId = $request->get('survey_id');
-        $questionText = $request->get('question_text');
-
-        $question = new Question();
-        $question->setSurveyId($surveyId);
-        $question->setQuestionText($questionText);
-        $question->create();
-
-        header('Location: /');
-        exit();
-    }
-
     public function editQuestion(RouteCollection $routes, Request $request): void
     {
         $questionId = $request->get('question_id');
@@ -34,7 +20,7 @@ class QuestionController
         $questionText = $request->get('question_text');
 
         $question = new Question();
-        $question->setId($questionId);
+        $question->getId($questionId);
         $question->setSurveyId($surveyId);
         $question->setQuestionText($questionText);
         $question->update();

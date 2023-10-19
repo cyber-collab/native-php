@@ -33,6 +33,7 @@ class Router
                 }
             });
 
+            $id = $matcher['id'] ?? null;
             $className = '\\App\\Controllers\\' . $matcher['controller'];
             $classInstance = new $className();
 
@@ -41,11 +42,13 @@ class Router
             $params = array_merge(array_slice($matcher, 2, -1),
                 array(
                     'routes' => $routes,
-                    'request' => $request ?? null
+                    'request' => $request ?? null,
                 )
             );
-
-            call_user_func_array(array($classInstance, $matcher['method']), $params);
+            if (isset($matcher['id'])) {
+                $params['id'] = $matcher['id'];
+            }
+          call_user_func_array(array($classInstance, $matcher['method']), $params);
 
         } catch (MethodNotAllowedException $e) {
             echo 'Route method is not allowed.';

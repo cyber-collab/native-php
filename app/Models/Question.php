@@ -2,16 +2,22 @@
 
 namespace App\Models;
 
+use AllowDynamicProperties;
 use App\Models\Database;
+use PDO;
 use PDOException;
 
+#[AllowDynamicProperties]
 class Question
 {
-    protected int $id;
+    public int $id;
 
     protected int $surveyId;
 
     protected string $questionText;
+
+
+    public ?array $options = null;
 
     /**
      * @return int
@@ -107,4 +113,43 @@ class Question
         }
     }
 
+    public static function getQuestionsBySurveyId(int $surveyId): array
+    {
+        $db = Database::getInstance();
+
+        $sql = "SELECT * FROM questions WHERE survey_id = :survey_id";
+        $params = [':survey_id' => $surveyId];
+
+        try {
+            $stmt = $db->getConnection()->prepare($sql);
+            $stmt->execute($params);
+
+            return $stmt->fetchAll(PDO::FETCH_CLASS, 'App\Models\Question');
+        } catch (PDOException $e) {
+            exit("Error: " . $e->getMessage());
+        }
+    }
+
+    public static function getById(int $id): ?Question
+    {
+        $db = Database::getInstance();
+
+        $sql = "SELECT * FROM questions WHERE id = :id";
+        $params = [':id' => $id];
+
+        try {
+            $stmt = $db->getConnection()->prepare($sql);
+            $stmt->execute($params);
+
+            $result = $stmt->fetchObject('App\Models\Question');
+
+            return ($result !== false) ? $result : null;
+        } catch (PDOException $e) {
+            exit("Error: " . $e->getMessage());
+        }
+    }
+
+    public function getAnswers(): array {
+        return Answer::getAnswersByQuestionId($this->getId());
+    }
 }

@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use AllowDynamicProperties;
 use App\Models\Database;
 use PDO;
 use PDOException;
 
+#[AllowDynamicProperties]
 class Survey
 {
     protected int $id;
@@ -16,7 +18,7 @@ class Survey
 
     protected string $status;
 
-    protected int $user_id;
+    protected ?string $question;
 
     public function create(): void
     {
@@ -90,6 +92,25 @@ class Survey
         }
     }
 
+    public static function getById(int $id): ?Survey
+    {
+        $db = Database::getInstance();
+
+        $sql = "SELECT * FROM surveys WHERE id = :id";
+        $params = [':id' => $id];
+
+        try {
+            $stmt = $db->getConnection()->prepare($sql);
+            $stmt->execute($params);
+
+            $result = $stmt->fetchObject('App\Models\Survey');
+
+            return ($result !== false) ? $result : null;
+        } catch (PDOException $e) {
+            exit("Error: " . $e->getMessage());
+        }
+    }
+
     public function setTitle(string $title): void
     {
         $this->title = $title;
@@ -125,5 +146,7 @@ class Survey
         $this->userId = $userId;
     }
 
+    public function getQuestions(): array {
+        return Question::getQuestionsBySurveyId($this->getId());
+    }
 }
-

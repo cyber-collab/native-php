@@ -16,4 +16,9 @@ $routes->add('survey', new Route(constant('URL_SUBFOLDER') . '/survey', ['contro
 $routes->add('survey/new', new Route(constant('URL_SUBFOLDER') . '/survey/new', ['controller' => 'SurveyController', 'method' => 'createSurvey'], []));
 $routes->add('create_question', new Route('/question/create', ['controller' => 'QuestionController', 'method' => 'createQuestion'], []));
 $routes->add('list_surveys', new Route(constant('URL_SUBFOLDER') . '/profile/list_surveys', ['controller' => 'ProfileController', 'method' => 'listSurveys'], []));
+$routes->add('edit_survey', new Route(constant('URL_SUBFOLDER') . '/survey/edit/{id}', ['controller' => 'SurveyController', 'method' => 'editSurveyForm'], ['id' => '\d+']));
+$routes->add('update_survey', new Route(constant('URL_SUBFOLDER') . '/survey/update/{id}', ['controller' => 'SurveyController', 'method' => 'editSurvey'], ['id' => '\d+']));
+$routes->add('delete_survey', new Route(constant('URL_SUBFOLDER') . '/survey/delete/{id}', ['controller' => 'SurveyController', 'method' => 'deleteSurvey'], ['id' => '\d+']));
 $routes->add('logout', new Route(constant('URL_SUBFOLDER') . 'logout', ['controller' => 'ProfileController', 'method' => 'logout'], []));
+$routes->add('record_vote', new Route(constant('URL_SUBFOLDER') . 'record_vote', ['controller' => 'ProfileController', 'method' => 'recordVote'], []));
+
