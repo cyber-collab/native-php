@@ -140,4 +140,59 @@ class SurveyController
             exit();
         }
     }
+
+
+    public function filterSurveys(RouteCollection $routes, Request $request): void
+    {
+        $title = $request->get('title');
+        $status = $request->get('status');
+        $publishedDate = $request->get('created_at');
+
+        $sql = "SELECT * FROM surveys WHERE 1";
+
+        if ($title) {
+            $sql .= " AND title LIKE '%$title%'";
+        }
+
+        if ($status) {
+            $sql .= " AND status = '$status'";
+        }
+
+        if ($publishedDate) {
+            $sql .= " AND DATE(published_date) = '$publishedDate'";
+        }
+
+        $surveys = Survey::getSurveysByCustomQuery($sql);
+
+        foreach ($surveys as $survey) {
+            $survey->questions = Question::getQuestionsBySurveyId($survey->getId());
+
+            foreach ($survey->questions as $question) {
+                $question->options = Answer::getAnswersByQuestionId($question->getId());
+            }
+        }
+
+        require_once APP_ROOT . '/views/filtered_surveys.php';
+    }
+
+    public function recordVote(RouteCollection $routes, Request $request): void
+    {
+        $questionId = (int) $request->get('question_id');
+        $answerId = (int) $request->get('answer_id');
+
+        $question = Question::getById($questionId);
+        $answer = Answer::getById($answerId);
+
+        if ($question === null || $answer === null) {
+            echo "Invalid question or answer";
+        }
+
+        $success = Answer::recordVote($questionId, $answerId);
+
+        if ($success) {
+            echo "Vote recorded successfully!";
+        } else {
+            echo "Error recording vote";
+        }
+    }
 }

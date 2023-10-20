@@ -39,27 +39,6 @@ class ProfileController
         require_once APP_ROOT . '/views/list_surveys.php';
     }
 
-    public function recordVote(RouteCollection $routes, Request $request): void
-    {
-        $questionId = (int) $request->get('question_id');
-        $answerId = (int) $request->get('answer_id');
-
-        $question = Question::getById($questionId);
-        $answer = Answer::getById($answerId);
-
-        if ($question === null || $answer === null) {
-            echo "Invalid question or answer";
-        }
-
-        $success = Answer::recordVote($questionId, $answerId);
-
-        if ($success) {
-            echo "Vote recorded successfully!";
-        } else {
-            echo "Error recording vote";
-        }
-    }
-
     public function logout(RouteCollection $routes, ?Request $request): void
     {
        User::logout();

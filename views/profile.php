@@ -19,7 +19,7 @@
     </ul>
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-            <form method="post">
+            <form method="post" action="/user/update/<?php echo $currentUser->getId(); ?>">
                 <div class="form-group">
                     <label for="name">Name:</label>
                     <input type="text" class="form-control" id="name" name="name" value="<?php echo $currentUser->getName(); ?>" required>

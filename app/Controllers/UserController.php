@@ -3,15 +3,28 @@
 namespace App\Controllers;
 
 use App\Models\User;
+use JetBrains\PhpStorm\NoReturn;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouteCollection;
 
 class UserController
 {
-    public function showAction(int $id, RouteCollection $routes): void
+    #[NoReturn] public function update(RouteCollection $routes, Request $request, int $id): void
     {
-        $user = new User();
-        $user->read($id);
+        $user = User::getCurrentUser() ;
 
-        require_once APP_ROOT . '/views/user.php';
-	}
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $username = $_POST['name'];
+            $email = $_POST['email'];
+
+            $user->setName($username);
+            $user->setEmail($email);
+
+            $user->update();
+        }
+
+        header("Location: /profile");
+        exit();
+    }
+
 }

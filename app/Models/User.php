@@ -61,10 +61,6 @@ class User
 
         return $this;
     }
-    public function create(array $data)
-	{
-
-	}
 
     public function setCreatedAt(DateTime $createdAt): self
     {
@@ -96,7 +92,27 @@ class User
         return null;
     }
 
-    public function save(): void
+    public function update(): void
+    {
+        $db = Database::getInstance();
+
+        $sql = "UPDATE users SET name = :name, email = :email WHERE id = :id";
+        $params = [
+            ':id' => $this->id,
+            ':name' => $this->name,
+            ':email' => $this->email
+        ];
+
+        try {
+            $stmt = $db->getConnection()->prepare($sql);
+            $stmt->execute($params);
+        } catch (PDOException $e) {
+            exit("Error: " . $e->getMessage());
+        }
+    }
+
+
+    public function create(): void
     {
         $db = Database::getInstance();
 
@@ -165,14 +181,6 @@ class User
         }
 
         return null;
-    }
-
-    public function read(int $id)
-    {
-        $this->name = 'Admin' ;
-        $this->email = 'admin@gmail.com';
-
-        return $this;
     }
 
     public static function logout(): void

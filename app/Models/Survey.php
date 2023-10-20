@@ -4,6 +4,7 @@ namespace App\Models;
 
 use AllowDynamicProperties;
 use App\Models\Database;
+use DateTime;
 use PDO;
 use PDOException;
 
@@ -20,11 +21,13 @@ class Survey
 
     protected ?string $question;
 
+    protected string $created_at;
+
     public function create(): void
     {
         $db = Database::getInstance();
 
-        $sql = "INSERT INTO surveys (title, status, user_id) VALUES (:title, :status, :user_id)";
+        $sql = "INSERT INTO surveys (title, status, user_id, created_at) VALUES (:title, :status, :user_id, NOW())";
         $params = [
             ':title' => $this->title,
             ':status' => $this->status,
@@ -166,4 +169,29 @@ class Survey
     public function getQuestions(): array {
         return Question::getQuestionsBySurveyId($this->getId());
     }
+
+    public function getCreatedAt(): string
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(string $created_at): void
+    {
+        $this->created_at = $created_at;
+    }
+
+    public static function getSurveysByCustomQuery($sql): ?array
+    {
+        $db = Database::getInstance();
+
+        try {
+            $stmt = $db->getConnection()->prepare($sql);
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_CLASS, 'App\Models\Survey');
+            return ($results !== false) ? $results : null;
+        } catch (PDOException $e) {
+            exit("Error: " . $e->getMessage());
+        }
+    }
+
 }

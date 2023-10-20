@@ -24,6 +24,6 @@ class RegistrationController
         $user->setEmail($email);
         $user->setPassword($password);
 
-        $user->save();
+        $user->create();
     }
 }

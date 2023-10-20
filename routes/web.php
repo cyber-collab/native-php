@@ -14,12 +14,13 @@ $routes->add('login', new Route(constant('URL_SUBFOLDER') . 'login', ['controlle
 $routes->add('login_authenticate', new Route(constant('URL_SUBFOLDER') . '/login/authenticate', ['controller' => 'LoginController', 'method' => 'authenticate'], []));
 $routes->add('survey', new Route(constant('URL_SUBFOLDER') . '/survey', ['controller' => 'SurveyController', 'method' => 'createSurveyForm'], []));
 $routes->add('survey/new', new Route(constant('URL_SUBFOLDER') . '/survey/new', ['controller' => 'SurveyController', 'method' => 'createSurvey'], []));
-$routes->add('create_question', new Route('/question/create', ['controller' => 'QuestionController', 'method' => 'createQuestion'], []));
 $routes->add('list_surveys', new Route(constant('URL_SUBFOLDER') . '/profile/list_surveys', ['controller' => 'ProfileController', 'method' => 'listSurveys'], []));
 $routes->add('edit_survey', new Route(constant('URL_SUBFOLDER') . '/survey/edit/{id}', ['controller' => 'SurveyController', 'method' => 'editSurveyForm'], ['id' => '\d+']));
 $routes->add('update_survey', new Route(constant('URL_SUBFOLDER') . '/survey/update/{id}', ['controller' => 'SurveyController', 'method' => 'editSurvey'], ['id' => '\d+']));
 $routes->add('delete_survey', new Route(constant('URL_SUBFOLDER') . '/survey/delete/{id}', ['controller' => 'SurveyController', 'method' => 'deleteSurvey'], ['id' => '\d+']));
 $routes->add('logout', new Route(constant('URL_SUBFOLDER') . 'logout', ['controller' => 'ProfileController', 'method' => 'logout'], []));
-$routes->add('record_vote', new Route(constant('URL_SUBFOLDER') . 'record_vote', ['controller' => 'ProfileController', 'method' => 'recordVote'], []));
+$routes->add('record_vote', new Route(constant('URL_SUBFOLDER') . 'record_vote', ['controller' => 'SurveyController', 'method' => 'recordVote'], []));
 $routes->add('all_surveys', new Route(constant('URL_SUBFOLDER') . '/all-surveys', ['controller' => 'PageController', 'method' => 'getAllSurveys'], []));
+$routes->add('filter_surveys', new Route(constant('URL_SUBFOLDER') . '/filter-surveys', ['controller' => 'SurveyController', 'method' => 'filterSurveys'], []));
+$routes->add('update_user', new Route(constant('URL_SUBFOLDER') . '/user/update/{id}', ['controller' => 'UserController', 'method' => 'update'], ['id' => '\d+']));
 
