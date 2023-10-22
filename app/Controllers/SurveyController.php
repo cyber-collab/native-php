@@ -17,7 +17,7 @@ class SurveyController
         require_once APP_ROOT . '/views/create_survey.php';
     }
 
-    public function createSurvey(RouteCollection $routes, Request $request): void
+    #[NoReturn] public function createSurvey(RouteCollection $routes, Request $request): void
     {
         $title = $request->get('title');
         $status = $request->get('status');
@@ -25,7 +25,6 @@ class SurveyController
 
         $survey = new Survey();
         $survey->setUserId($currentUser->getId());
-
         $survey->setTitle($title);
         $survey->setStatus($status);
         $survey->create();
@@ -39,8 +38,9 @@ class SurveyController
                 $question->setSurveyId($survey->getId());
                 $question->setQuestionText($questionText);
                 $question->create();
-                if (isset($answerTexts[$questionIndex])) {
-                    foreach ($answerTexts as $answerText) {
+
+                if (isset($answerTexts[$questionIndex]) && is_array($answerTexts[$questionIndex])) {
+                    foreach ($answerTexts[$questionIndex] as $answerText) {
                         $answer = new Answer();
                         $answer->setQuestionId($question->getId());
                         $answer->setAnswerText($answerText);
@@ -49,6 +49,7 @@ class SurveyController
                 }
             }
         }
+
         header("Location: /profile/list_surveys");
         exit();
     }

@@ -11,6 +11,7 @@ use PDOException;
 class Answer
 {
     protected int $id;
+
     protected int $questionId;
 
     protected string $answerText;
@@ -37,7 +38,6 @@ class Answer
     {
         return $this->answerText;
     }
-
 
     public function getVotes(): int
     {
@@ -157,5 +157,4 @@ class Answer
             exit("Error: " . $e->getMessage());
         }
     }
-
 }

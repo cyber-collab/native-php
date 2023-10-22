@@ -29,5 +29,4 @@ class LoginController
             echo "Invalid data";
         }
     }
-
 }
