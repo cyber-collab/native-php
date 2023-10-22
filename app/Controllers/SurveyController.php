@@ -6,6 +6,7 @@ use App\Models\Answer;
 use App\Models\Question;
 use App\Models\Survey;
 use App\Models\User;
+use App\Services\SurveyService;
 use JetBrains\PhpStorm\NoReturn;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouteCollection;
@@ -29,29 +30,47 @@ class SurveyController
         $survey->setStatus($status);
         $survey->create();
 
+        $this->processQuestions($request, function($question, $questionIndex) use ($survey, $request) {
+            $question->setSurveyId($survey->getId());
+            $question->create();
+
+            $this->processAnswers($request, function($answerText, $questionIndex) use ($question) {
+                $answer = new Answer();
+                $answer->setQuestionId($question->getId());
+                $answer->setAnswerText($answerText);
+                $answer->create();
+            });
+        });
+
+        header("Location: /profile/list_surveys");
+        exit();
+    }
+
+    private function processQuestions(Request $request, $callback): void
+    {
         $questionTexts = $request->get('question_text');
-        $answerTexts = $request->get('answer_text');
 
         if ($questionTexts && is_array($questionTexts)) {
             foreach ($questionTexts as $questionIndex => $questionText) {
                 $question = new Question();
-                $question->setSurveyId($survey->getId());
                 $question->setQuestionText($questionText);
-                $question->create();
 
-                if (isset($answerTexts[$questionIndex]) && is_array($answerTexts[$questionIndex])) {
-                    foreach ($answerTexts[$questionIndex] as $answerText) {
-                        $answer = new Answer();
-                        $answer->setQuestionId($question->getId());
-                        $answer->setAnswerText($answerText);
-                        $answer->create();
-                    }
+                $callback($question, $questionIndex);
+            }
+        }
+    }
+
+    private function processAnswers(Request $request, $callback): void
+    {
+        $answerTexts = $request->get('answer_text');
+
+        if ($answerTexts && is_array($answerTexts)) {
+            foreach ($answerTexts as $questionIndex => $answers) {
+                foreach ($answers as $answerText) {
+                    $callback($answerText, $questionIndex);
                 }
             }
         }
-
-        header("Location: /profile/list_surveys");
-        exit();
     }
 
     public function editSurveyForm(RouteCollection $routes, ?Request $request, ?int $id): void
@@ -67,58 +86,20 @@ class SurveyController
     {
         $title = $request->get('title');
         $status = $request->get('status');
+        $questionTexts = $request->get('question_text');
+        $answerTexts = $request->get('answer_text');
 
-        $survey = Survey::getById($id);
+        $surveyService = new SurveyService();
+        $surveyService->processSurveyData($id, $title, $status, $questionTexts, $answerTexts);
 
-        if ($survey) {
-            $survey->setTitle($title);
-            $survey->setStatus($status);
-            $survey->update();
-
-            $questionTexts = $request->get('question_text');
-            $answerTexts = $request->get('answer_text');
-
-            foreach ($questionTexts as $questionId => $questionText) {
-                if ($questionId === 'new') {
-                    $newQuestion = new Question();
-                    $newQuestion->setQuestionText($questionText);
-                    $newQuestion->setSurveyId($id);
-                    $newQuestion->create();
-                    $questionId = $newQuestion->getId();
-                } else {
-                    $question = Question::getById($questionId);
-                    if ($question) {
-                        $question->setQuestionText($questionText);
-                        $question->setSurveyId($id);
-                        $question->update();
-                    }
-                }
-
-                if (isset($answerTexts[$questionId]) && is_array($answerTexts[$questionId])) {
-                    foreach ($answerTexts[$questionId] as $answerId => $answerText) {
-                        if (str_contains($answerId, 'new')) {
-                            $newAnswer = new Answer();
-                            $newAnswer->setQuestionId($questionId);
-                            $newAnswer->setAnswerText($answerText);
-                            $newAnswer->create();
-                        } else {
-                            $answer = Answer::getById($answerId);
-                            if ($answer) {
-                                $answer->setAnswerText($answerText);
-                                $answer->update();
-                            }
-                        }
-                    }
-                }
-            }
-            $deletedAnswers = $request->get('deleted_answers');
-            if (isset($deletedAnswers)) {
-                foreach ($deletedAnswers as $deletedAnswerId) {
-                    $deletedAnswer = Answer::getById($deletedAnswerId);
-                    $deletedAnswer?->delete();
-                }
+        $deletedAnswers = $request->get('deleted_answers');
+        if (isset($deletedAnswers)) {
+            foreach ($deletedAnswers as $deletedAnswerId) {
+                $deletedAnswer = Answer::getById($deletedAnswerId);
+                $deletedAnswer?->delete();
             }
         }
+
         header("Location: /profile/list_surveys", true, 200);
         exit();
     }

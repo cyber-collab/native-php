@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a6efafe5671c78008c45a98355ab08e9",
+    "content-hash": "9a459cd54e294d25a71dfc87479efb04",
     "packages": [
         {
             "name": "graham-campbell/result-type",
@@ -1577,7 +1577,7 @@
             "description": "Provides a tight integration between Symfony components and the Symfony full-stack framework",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/framework-bundle/tree/6.3"
+                "source": "https://github.com/symfony/framework-bundle/tree/v6.3.6"
             },
             "funding": [
                 {

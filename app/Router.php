@@ -33,7 +33,6 @@ class Router
                 }
             });
 
-            $id = $matcher['id'] ?? null;
             $className = '\\App\\Controllers\\' . $matcher['controller'];
             $classInstance = new $className();
 

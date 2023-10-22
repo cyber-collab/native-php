@@ -6,6 +6,7 @@ use App\Models\Answer;
 use App\Models\Question;
 use App\Models\Survey;
 use App\Models\User;
+use App\Services\SurveyService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouteCollection;
 
@@ -25,16 +26,9 @@ class ProfileController
     public function listSurveys(RouteCollection $routes, ?Request $request): void
     {
         $currentUser = User::getCurrentUser();
-
         $surveys = Survey::getSurveysByUserId($currentUser->getId());
 
-        foreach ($surveys as $survey) {
-            $survey->questions = Question::getQuestionsBySurveyId($survey->getId());
-
-            foreach ($survey->questions as $question) {
-                $question->options = Answer::getAnswersByQuestionId($question->getId());
-            }
-        }
+        SurveyService::processSurveys($surveys);
 
         require_once APP_ROOT . '/views/list_surveys.php';
     }

@@ -1,13 +1,5 @@
 version: '3.1'
 services:
-    mailhog:
-        container_name: "mailhog_poll"
-        networks:
-            - php_network
-        image: 'mailhog/mailhog:latest'
-        ports:
-            - '9001:8025'
-
     mysql:
         container_name: "mysql_poll"
         networks:

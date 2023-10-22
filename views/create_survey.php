@@ -50,6 +50,7 @@
                 `<div class="form-group answers-group ml-3">` +
                 `<label for="answer_text_${questionIndex}">Answer Text:</label>` +
                 `<input type="text" name="answer_text[${questionIndex}][]" class="form-control" id="answer_text_${questionIndex}" required>` +
+                `<button type="button" class="btn btn-primary add-answer" data-question="${questionIndex}">Add Answer</button>` +
                 `<button type="button" class="btn btn-danger remove-answer">Remove Answer</button>` +
                 `</div>`
             );

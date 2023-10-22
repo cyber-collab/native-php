@@ -1,19 +1,16 @@
-PHPDocker.io generated environment
+Start project
 ==================================
 
-# Add to your project #
+# Deploy repository #
 
-Simply, unzip the file into your project, this will create `docker-compose.yml` on the root of your project and a folder
-named `phpdocker` containing nginx and php-fpm config for it.
+Please, clone this repository form github, by this options:
 
-Ensure the webserver config on `phpdocker/nginx/nginx.conf` is correct for your project. PHPDocker.io will have
-customised this file according to the front controller location relative to the docker-compose file you chose on the
-generator (by default `public/index.php`).
+Option|Links
+-------|--------------------------
+SHH|[git@github.com:cyber-collab/native-php.git](git@github.com:cyber-collab/native-php.git)
+HTTPS|[https://github.com/cyber-collab/native-php.git](https://github.com/cyber-collab/native-php.git)
 
-Note: you may place the files elsewhere in your project. Make sure you modify the locations for the php-fpm dockerfile,
-the php.ini overrides and nginx config on `docker-compose.yml` if you do so.
-
-# How to run #
+# How to run docker #
 
 Dependencies:
 
@@ -30,15 +27,7 @@ add your own hostname on your `/etc/hosts`
 
 Service|Address outside containers
 -------|--------------------------
-Webserver|[localhost:29000](http://localhost:29000)
-
-## Hosts within your environment ##
-
-You'll need to configure your application to use any services you enabled:
-
-Service|Hostname|Port number
-------|---------|-----------
-php-fpm|php-fpm|9000
+Webserver|[localhost](http://localhost)
 
 # Docker compose cheatsheet #
 
@@ -139,4 +128,16 @@ environment:
 * Finally, add “Xdebug helper” extension in your browser, set breakpoints and start debugging
 
 
+# After install docker #
 
+1. Please, clone from .env.example to .env and setup settings for database
+2. Run `composer install` for install dependencies for this project 
+
+# How to using this functionality #
+
+1. Please, going to [localhost](http://localhost)
+2. Press on button Register or Login if you have account
+3. After login you redirect to your profile when you can add Surveys
+4. After create survey you can going on your list survey when you can edit your Survey
+5. After making all manipulation with surveys, you can going to list surveys which is available to all users going home
+and press to button survey, you redirect to list, when tou make filter and votes for survey

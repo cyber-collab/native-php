@@ -43,6 +43,7 @@
         </div>
     </form>
 </div>
+<?php include "footer.php"; ?>
 <script>
     $(document).ready(function() {
         function generateUniqueId() {
@@ -113,4 +114,3 @@
         });
     });
 </script>
-<?php include "footer.php"; ?>
