@@ -54,7 +54,6 @@ class Survey
             ':title' => $this->title,
             ':status' => $this->status
         ];
-
         try {
             $stmt = $db->getConnection()->prepare($sql);
             $stmt->execute($params);

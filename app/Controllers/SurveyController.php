@@ -49,6 +49,8 @@ class SurveyController
                 }
             }
         }
+        header("Location: /profile/list_surveys");
+        exit();
     }
 
     public function editSurveyForm(RouteCollection $routes, ?Request $request, ?int $id): void
@@ -159,7 +161,7 @@ class SurveyController
         }
 
         if ($publishedDate) {
-            $sql .= " AND DATE(published_date) = '$publishedDate'";
+            $sql .= " AND DATE(created_at) = '$publishedDate'";
         }
 
         $surveys = Survey::getSurveysByCustomQuery($sql);
@@ -177,14 +179,15 @@ class SurveyController
 
     public function recordVote(RouteCollection $routes, Request $request): void
     {
-        $questionId = (int) $request->get('question_id');
-        $answerId = (int) $request->get('answer_id');
+        $questionId = $request->get('question_id');
+        $answerId = $request->get('answer_id');
 
         $question = Question::getById($questionId);
         $answer = Answer::getById($answerId);
 
         if ($question === null || $answer === null) {
             echo "Invalid question or answer";
+            exit();
         }
 
         $success = Answer::recordVote($questionId, $answerId);

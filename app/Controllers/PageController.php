@@ -11,8 +11,7 @@ use Symfony\Component\Routing\RouteCollection;
 
 class PageController
 {
-    // Homepage action
-	public function indexAction(RouteCollection $routes, ?Request $request)
+	public function index(RouteCollection $routes, ?Request $request): void
 	{
         $user = User::getCurrentUser();
 

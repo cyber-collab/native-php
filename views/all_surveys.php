@@ -48,7 +48,7 @@
                                     <ul class="list-group">
                                         <?php foreach ($question->options as $answer): ?>
                                             <li class="list-group-item">
-                                                <input type="radio" name="answer_id" value="<?php echo $answer->getId(); ?>">
+                                                <input type="radio" required name="answer_id" value="<?php echo $answer->getId(); ?>">
                                                 <label class="form-check-label"> <?php echo $answer->answer_text ?>
                                                     - Numbers votes <?php echo $answer->getVotes()?></label>
                                             </li>

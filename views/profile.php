@@ -1,12 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-</head>
-<body>
+<?php include "header.php"; ?>
 <div class="container mt-5">
     <h1 class="mb-4">Profile</h1>
     <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
@@ -14,7 +6,7 @@
             <a class="nav-link active" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="true">Profile</a>
         </li>
         <li class="nav-item" role="presentation">
-            <a class="nav-link" id="surveys-tab" href="/profile/list_surveys" aria-controls="surveys" aria-selected="false">Surveys</a>
+            <a class="nav-link" id="surveys-tab" href="/profile/list_surveys" aria-controls="surveys" aria-selected="false">My Surveys</a>
         </li>
     </ul>
     <div class="tab-content" id="myTabContent">
@@ -38,9 +30,4 @@
         </div>
     </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-</body>
-</html>
-
+<?php include "footer.php"; ?>
