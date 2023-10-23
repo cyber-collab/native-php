@@ -18,9 +18,9 @@ class User
 
     protected string $password;
 
-    protected ?DateTime $created_at;
+    protected ?string $created_at = null;
 
-    protected ?DateTime $updated_at = null;
+    protected ?string $updated_at = null;
 
     public function getId(): int
     {
@@ -128,7 +128,7 @@ class User
 
         $result = DatabaseHelper::executeFetchObject($sql, $params, 'App\Models\User');
 
-        return $result ?? throw new NotFoundObjectException();
+        return $result ?? null;
     }
 
     /**
@@ -149,7 +149,7 @@ class User
             $user->password = $result->password;
             return $user;
         } else {
-           return throw new NotFoundObjectException();
+           return null;
         }
     }
 

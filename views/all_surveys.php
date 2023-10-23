@@ -28,15 +28,15 @@
         <?php foreach ($surveys as $survey): ?>
             <div class="mb-4">
                 <ul class="list-group">
+                    <li class="list-group-item">
+                        <strong>Title:</strong> <?php echo $survey->getTitle(); ?><br>
+                        <strong>Status:</strong> <?php echo $survey->getStatus(); ?><br>
+                    </li>
                     <?php foreach ($survey->questions as $question): ?>
-                        <li class="list-group-item">
-                            <strong>Title:</strong> <?php echo $survey->getTitle(); ?><br>
-                            <strong>Status:</strong> <?php echo $survey->getStatus(); ?><br>
-                        </li>
                         <li class="list-group-item">
                             <strong>Question:</strong> <?php echo $question->question_text; ?><br>
                             <?php if (!empty($question->options)): ?>
-                                <form action="/record_vote" method="post">
+                                <form action="/record-vote" method="post">
                                     <input type="hidden" name="question_id" value="<?php echo $question->getId(); ?>">
                                     <ul class="list-group">
                                         <?php foreach ($question->options as $answer): ?>
