@@ -1,6 +1,6 @@
 <?php include "header.php"; ?>
 
-<div class="container mt-5" id="questionsContainer">
+<div class="container mt-5">
     <h1>Edit Survey</h1>
     <form action="/survey/update/<?php echo $survey->getId(); ?>" method="post">
         <div class="form-group">
@@ -36,7 +36,8 @@
                 <button type="button" class="btn btn-danger remove-question ml-2">Remove Question</button>
             </div>
         <?php endforeach; ?>
-
+        <div id="questionsContainer">
+        </div>
         <div class="form-group mt-4">
             <button type="button" class="btn btn-primary add-question mr-2">Add Question</button>
             <button type="submit" class="btn btn-success">Save Changes</button>
@@ -64,7 +65,6 @@
                 '<label for="answer_text">Answer Text:</label>' +
                 `<input type="text" name="answer_text[${newQuestionId}][${newAnswerId}]" class="form-control">` +
                 '<button type="button" class="btn btn-danger remove-answer">Remove Answer</button>' +
-                '<input type="hidden" name="deleted_answers[]" value="">' +
                 '</div>' +
                 '<div class="mt-2">' +
                 '<button type="button" class="btn btn-primary add-answer">Add Answer</button>' +
@@ -91,7 +91,14 @@
         });
 
         $(document).on('click', '.remove-question', function() {
-            $(this).closest('.question-group').remove();
+            const questionGroup = $(this).closest('.question-group');
+            const questionIdInput = questionGroup.find('input[name^="question_text["]');
+            const questionId = questionIdInput.attr('name').match(/\[(\d+)\]/)[1];
+
+            const deletedQuestionsInput = $('<input type="hidden" name="deleted_questions[]">');
+            deletedQuestionsInput.val(questionId);
+
+            questionGroup.replaceWith(deletedQuestionsInput);
         });
 
         $(document).on('click', '.remove-answer', function() {

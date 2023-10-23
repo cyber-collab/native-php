@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Exceptions\NotFoundObjectException;
 use App\Models\User;
 use JetBrains\PhpStorm\NoReturn;
 use Symfony\Component\HttpFoundation\Request;
@@ -9,6 +10,9 @@ use Symfony\Component\Routing\RouteCollection;
 
 class UserController
 {
+    /**
+     * @throws NotFoundObjectException
+     */
     #[NoReturn] public function update(RouteCollection $routes, Request $request, int $id): void
     {
         $user = User::getCurrentUser() ;

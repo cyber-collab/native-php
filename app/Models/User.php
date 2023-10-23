@@ -60,13 +60,13 @@ class User
         return $this;
     }
 
-    public function setCreatedAt(DateTime $createdAt): self
+    public function setCreatedAt(string $createdAt): self
     {
         $this->created_at = $createdAt;
         return $this;
     }
 
-    public function setUpdatedAt(DateTime $updatedAt): self
+    public function setUpdatedAt(string $updatedAt): self
     {
         $this->updated_at = $updatedAt;
         return $this;
@@ -118,9 +118,6 @@ class User
         $this->id = Database::getInstance()->getConnection()->lastInsertId();
     }
 
-    /**
-     * @throws NotFoundObjectException
-     */
     public static function getUserByEmail(string $email): ?User
     {
         $sql = "SELECT * FROM users WHERE email = :email";
@@ -131,9 +128,6 @@ class User
         return $result ?? null;
     }
 
-    /**
-     * @throws NotFoundObjectException
-     */
     public static function getUserById(int $id): ?User
     {
         $sql = "SELECT * FROM users WHERE id = :id";

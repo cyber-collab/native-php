@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Exceptions\NotFoundObjectException;
 use App\Models\Answer;
 use App\Models\Question;
 use App\Models\Survey;
@@ -77,6 +78,9 @@ class SurveyController
         }
     }
 
+    /**
+     * @throws NotFoundObjectException
+     */
     public function editSurveyForm(RouteCollection $routes, ?Request $request, ?int $id): void
     {
         $survey = Survey::getById($id);
@@ -98,6 +102,19 @@ class SurveyController
 
         $surveyService = new SurveyService();
         $surveyService->processSurveyData($id, $title, $status, $questionTexts, $answerTexts);
+
+        $deletedQuestions = $request->get('deleted_questions');
+        if (isset($deletedQuestions)) {
+            foreach ($deletedQuestions as $deletedQuestionId) {
+                $answers = Answer::getAnswersByQuestionId($deletedQuestionId);
+                foreach ($answers as $answer) {
+                    $answer->delete();
+                }
+
+                $deletedQuestion = Question::getById($deletedQuestionId);
+                $deletedQuestion?->delete();
+            }
+        }
 
         $deletedAnswers = $request->get('deleted_answers');
         if (isset($deletedAnswers)) {
@@ -134,7 +151,6 @@ class SurveyController
             exit();
         }
     }
-
 
     public function filterSurveys(RouteCollection $routes, Request $request): void
     {
