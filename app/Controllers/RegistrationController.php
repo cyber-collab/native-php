@@ -25,5 +25,8 @@ class RegistrationController
         $user->setPassword($password);
 
         $user->create();
+
+        header("Location: /login");
+        exit();
     }
 }
