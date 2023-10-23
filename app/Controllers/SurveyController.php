@@ -188,7 +188,7 @@ class SurveyController
     /**
      * @throws Exception
      */
-    public function recordVote(RouteCollection $routes, Request $request): void
+    #[NoReturn] public function recordVote(RouteCollection $routes, Request $request): void
     {
         $questionId = $request->get('question_id');
         $answerId = $request->get('answer_id');
@@ -201,12 +201,9 @@ class SurveyController
             exit();
         }
 
-        $success = Answer::recordVote($questionId, $answerId);
+        Answer::recordVote($questionId, $answerId);
 
-        if ($success) {
-            echo "Vote recorded successfully!";
-        } else {
-            echo "Error recording vote";
-        }
+        header("Location: /all-surveys");
+        exit();
     }
 }

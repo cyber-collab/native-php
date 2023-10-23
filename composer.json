@@ -26,7 +26,6 @@
         "symfony/phpunit-bridge": "^v6.3.0"
     },
     "require": {
-        "illuminate/collections": "10.x-dev",
         "symfony/console": "6.3.x-dev",
         "symfony/framework-bundle": "6.3.x-dev",
         "symfony/http-kernel": "6.3.x-dev",

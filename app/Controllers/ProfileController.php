@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Exceptions\NotFoundObjectException;
 use App\Models\Survey;
 use App\Models\User;
 use App\Services\SurveyService;
@@ -10,6 +11,9 @@ use Symfony\Component\Routing\RouteCollection;
 
 class ProfileController
 {
+    /**
+     * @throws NotFoundObjectException
+     */
     public function showProfileForm(RouteCollection $routes, ?Request $request): void
     {
         $currentUser = User::getCurrentUser();
@@ -21,6 +25,9 @@ class ProfileController
         }
     }
 
+    /**
+     * @throws NotFoundObjectException
+     */
     public function listSurveys(RouteCollection $routes, ?Request $request): void
     {
         $currentUser = User::getCurrentUser();
