@@ -2,8 +2,6 @@
 
 namespace App\Controllers;
 
-use App\Models\Answer;
-use App\Models\Question;
 use App\Models\Survey;
 use App\Models\User;
 use App\Services\SurveyService;
@@ -27,7 +25,6 @@ class ProfileController
     {
         $currentUser = User::getCurrentUser();
         $surveys = Survey::getSurveysByUserId($currentUser->getId());
-
         SurveyService::processSurveys($surveys);
 
         require_once APP_ROOT . '/views/list_surveys.php';

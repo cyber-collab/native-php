@@ -1,39 +1,41 @@
 <?php
+
 namespace App\Models;
 
-use App\Models\Database;
+use AllowDynamicProperties;
+use App\Exceptions\NotFoundObjectException;
+use App\Helpers\DatabaseHelper;
 use DateTime;
-use PDO;
-use PDOException;
 
+#[AllowDynamicProperties]
 class User
 {
-	protected int $id;
+    protected int $id;
 
-	protected string $name;
+    protected string $name;
 
-	protected string $email;
+    protected string $email;
 
     protected string $password;
 
-    protected DateTime $created_at;
+    protected ?DateTime $created_at;
 
     protected ?DateTime $updated_at = null;
 
     public function getId(): int
     {
-		return $this->id;
-	}
+        return $this->id;
+    }
 
-	public function getName(): string
+    public function getName(): string
     {
-		return $this->name;
-	}
+        return $this->name;
+    }
 
-	public function getEmail(): string
+    public function getEmail(): string
     {
-		return $this->email;
-	}
+        return $this->email;
+    }
 
     public function getPassword(): string
     {
@@ -42,37 +44,31 @@ class User
 
     public function setName(string $name): self
     {
-		$this->name = $name;
-
+        $this->name = $name;
         return $this;
-	}
+    }
 
-	public function setEmail(string $email): self
+    public function setEmail(string $email): self
     {
-		$this->email = $email;
-
+        $this->email = $email;
         return $this;
-
     }
 
     public function setPassword(string $password): static
     {
         $this->password = password_hash($password, PASSWORD_DEFAULT);
-
         return $this;
     }
 
     public function setCreatedAt(DateTime $createdAt): self
     {
         $this->created_at = $createdAt;
-
         return $this;
     }
 
     public function setUpdatedAt(DateTime $updatedAt): self
     {
         $this->updated_at = $updatedAt;
-
         return $this;
     }
 
@@ -81,6 +77,9 @@ class User
         return password_verify($password, $this->password);
     }
 
+    /**
+     * @throws NotFoundObjectException
+     */
     public static function getCurrentUser(): ?User
     {
         session_start();
@@ -94,8 +93,6 @@ class User
 
     public function update(): void
     {
-        $db = Database::getInstance();
-
         $sql = "UPDATE users SET name = :name, email = :email WHERE id = :id";
         $params = [
             ':id' => $this->id,
@@ -103,19 +100,11 @@ class User
             ':email' => $this->email
         ];
 
-        try {
-            $stmt = $db->getConnection()->prepare($sql);
-            $stmt->execute($params);
-        } catch (PDOException $e) {
-            exit("Error: " . $e->getMessage());
-        }
+        DatabaseHelper::executeQuery($sql, $params);
     }
-
 
     public function create(): void
     {
-        $db = Database::getInstance();
-
         $sql = "INSERT INTO users (name, email, password, created_at, updated_at) 
                 VALUES (:name, :email, :password, NOW(), NOW())";
         $params = [
@@ -124,63 +113,44 @@ class User
             ':password' => $this->password
         ];
 
-        try {
-            $stmt = $db->getConnection()->prepare($sql);
-            $stmt->execute($params);
+        DatabaseHelper::executeQuery($sql, $params);
 
-            $this->id = $db->getConnection()->lastInsertId();
-        } catch (PDOException $e) {
-            exit("Error: " . $e->getMessage());
-        }
+        $this->id = Database::getInstance()->getConnection()->lastInsertId();
     }
 
+    /**
+     * @throws NotFoundObjectException
+     */
     public static function getUserByEmail(string $email): ?User
     {
-        $db = Database::getInstance();
         $sql = "SELECT * FROM users WHERE email = :email";
-        $stmt = $db->getConnection()->prepare($sql);
-        $stmt->execute([':email' => $email]);
+        $params = [':email' => $email];
 
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $result = DatabaseHelper::executeFetchObject($sql, $params, 'App\Models\User');
 
-        if ($result) {
-            $user = new User();
-            $user->id = $result['id'];
-            $user->name = $result['name'];
-            $user->email = $result['email'];
-            $user->password = $result['password'];
-            return $user;
-        }
-
-        return null;
+        return $result ?? throw new NotFoundObjectException();
     }
 
+    /**
+     * @throws NotFoundObjectException
+     */
     public static function getUserById(int $id): ?User
     {
-        $db = Database::getInstance();
-
         $sql = "SELECT * FROM users WHERE id = :id";
         $params = [':id' => $id];
 
-        try {
-            $stmt = $db->getConnection()->prepare($sql);
-            $stmt->execute($params);
+        $result = DatabaseHelper::executeFetchObject($sql, $params, null);
 
-            $userData = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($userData !== false) {
-                $user = new User();
-                $user->id = $userData['id'];
-                $user->setName($userData['name']);
-                $user->setEmail($userData['email']);
-                $user->setPassword($userData['password']);
-                return $user;
-            }
-        } catch (PDOException $e) {
-            exit("Error: " . $e->getMessage());
+        if ($result) {
+            $user = new User();
+            $user->id = $result->id;
+            $user->name = $result->name;
+            $user->email = $result->email;
+            $user->password = $result->password;
+            return $user;
+        } else {
+           return throw new NotFoundObjectException();
         }
-
-        return null;
     }
 
     public static function logout(): void

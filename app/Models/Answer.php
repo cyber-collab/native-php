@@ -3,9 +3,8 @@
 namespace App\Models;
 
 use AllowDynamicProperties;
-use App\Models\Database;
-use PDO;
-use PDOException;
+use App\Exceptions\NotFoundObjectException;
+use App\Helpers\DatabaseHelper;
 
 #[AllowDynamicProperties]
 class Answer
@@ -44,7 +43,6 @@ class Answer
         return $this->votes;
     }
 
-
     public function setVotes(int $votes): void
     {
         $this->votes = $votes;
@@ -55,106 +53,63 @@ class Answer
         $this->questionId = $questionId;
         return $this;
     }
+
     public function create(): void
     {
-        $db = Database::getInstance();
-
         $sql = "INSERT INTO answers (question_id, answer_text) VALUES (:question_id,  :answer_text)";
         $params = [
             ':question_id' => $this->questionId,
             ':answer_text' => $this->answerText
         ];
 
-        try {
-            $stmt = $db->getConnection()->prepare($sql);
-            $stmt->execute($params);
-
-            $this->id = $db->getConnection()->lastInsertId();
-        } catch (PDOException $e) {
-            exit("Error: " . $e->getMessage());
-        }
+        DatabaseHelper::executeQuery($sql, $params);
     }
 
     public function delete(): void
     {
-        $db = Database::getInstance();
-
         $sql = "DELETE FROM answers WHERE id = :id";
         $params = [':id' => $this->id];
 
-        try {
-            $stmt = $db->getConnection()->prepare($sql);
-            $stmt->execute($params);
-        } catch (PDOException $e) {
-            exit("Error: " . $e->getMessage());
-        }
+        DatabaseHelper::executeQuery($sql, $params);
     }
 
     public function update(): void
     {
-        $db = Database::getInstance();
-
         $sql = "UPDATE answers SET answer_text = :answer_text WHERE id = :id";
         $params = [
             ':id' => $this->id,
             ':answer_text' => $this->answerText,
         ];
 
-        try {
-            $stmt = $db->getConnection()->prepare($sql);
-            $stmt->execute($params);
-        } catch (PDOException $e) {
-            exit("Error: " . $e->getMessage());
-        }
+        DatabaseHelper::executeQuery($sql, $params);
     }
 
     public static function getAnswersByQuestionId(int $questionId): array
     {
-        $db = Database::getInstance();
-
         $sql = "SELECT * FROM answers WHERE question_id = :question_id";
         $params = [':question_id' => $questionId];
 
-        try {
-            $stmt = $db->getConnection()->prepare($sql);
-            $stmt->execute($params);
-
-            return $stmt->fetchAll(PDO::FETCH_CLASS, 'App\Models\Answer');
-        } catch (PDOException $e) {
-            exit("Error: " . $e->getMessage());
-        }
+        return DatabaseHelper::executeFetchAll($sql, $params, 'App\Models\Answer');
     }
 
     public static function recordVote(int $questionId, int $answerId): bool
     {
-        $db = Database::getInstance();
-
         $sql = "UPDATE answers SET votes = votes + 1 WHERE id = :answer_id AND question_id = :question_id";
         $params = [':answer_id' => $answerId, ':question_id' => $questionId];
 
-        try {
-            $stmt = $db->getConnection()->prepare($sql);
-            return $stmt->execute($params);
-        } catch (PDOException $e) {
-            exit("Error: " . $e->getMessage());
-        }
+        return DatabaseHelper::executeQuery($sql, $params) !== null;
     }
 
-    public static function getById(int $id): ?Answer {
-        $db = Database::getInstance();
-
+    /**
+     * @throws NotFoundObjectException
+     */
+    public static function getById(int $id): ?Answer
+    {
         $sql = "SELECT * FROM answers WHERE id = :id";
         $params = [':id' => $id];
 
-        try {
-            $stmt = $db->getConnection()->prepare($sql);
-            $stmt->execute($params);
+        $result = DatabaseHelper::executeFetchObject($sql, $params, 'App\Models\Answer');
 
-            $result = $stmt->fetchObject('App\Models\Answer');
-
-            return ($result !== false) ? $result : null;
-        } catch (PDOException $e) {
-            exit("Error: " . $e->getMessage());
-        }
+        return $result ?? throw new NotFoundObjectException();
     }
 }

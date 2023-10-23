@@ -7,6 +7,7 @@ use App\Models\Question;
 use App\Models\Survey;
 use App\Models\User;
 use App\Services\SurveyService;
+use Exception;
 use JetBrains\PhpStorm\NoReturn;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouteCollection;
@@ -18,6 +19,9 @@ class SurveyController
         require_once APP_ROOT . '/views/create_survey.php';
     }
 
+    /**
+     * @throws Exception
+     */
     #[NoReturn] public function createSurvey(RouteCollection $routes, Request $request): void
     {
         $title = $request->get('title');
@@ -29,12 +33,12 @@ class SurveyController
         $survey->setTitle($title);
         $survey->setStatus($status);
         $survey->create();
-
         $this->processQuestions($request, function($question, $questionIndex) use ($survey, $request) {
             $question->setSurveyId($survey->getId());
             $question->create();
 
-            $this->processAnswers($request, function($answerText, $questionIndex) use ($question) {
+            $this->processAnswers(
+            $request, function($answerText, $questionIndex) use ($question) {
                 $answer = new Answer();
                 $answer->setQuestionId($question->getId());
                 $answer->setAnswerText($answerText);
@@ -82,6 +86,9 @@ class SurveyController
         }
     }
 
+    /**
+     * @throws Exception
+     */
     #[NoReturn] public function editSurvey(RouteCollection $routes, Request $request, ?int $id): void
     {
         $title = $request->get('title');
@@ -104,6 +111,9 @@ class SurveyController
         exit();
     }
 
+    /**
+     * @throws Exception
+     */
     public function deleteSurvey(RouteCollection $routes, Request $request, int $id): void
     {
         $questions = Question::getQuestionsBySurveyId($id);
@@ -159,6 +169,9 @@ class SurveyController
         require_once APP_ROOT . '/views/filtered_surveys.php';
     }
 
+    /**
+     * @throws Exception
+     */
     public function recordVote(RouteCollection $routes, Request $request): void
     {
         $questionId = $request->get('question_id');

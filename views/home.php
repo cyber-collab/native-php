@@ -17,6 +17,7 @@
             <ul class="list-group">
                 <li class="list-group-item">
                     <a href="profile" class="btn btn-primary"> Your profile </a>
+                    <a href="logout" class="btn btn-primary"> Logout </a>
                     <a href="all-surveys" class="btn btn-primary"> Surveys </a>
                 </li>
             </ul>

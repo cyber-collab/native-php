@@ -3,15 +3,15 @@
 namespace App\Models;
 
 use AllowDynamicProperties;
-use App\Models\Database;
-use DateTime;
+use App\Exceptions\NotFoundObjectException;
+use App\Helpers\DatabaseHelper;
 use PDO;
 use PDOException;
 
 #[AllowDynamicProperties]
 class Survey
 {
-    protected int $id;
+    protected ?int $id = null;
 
     protected int $userId;
 
@@ -25,8 +25,6 @@ class Survey
 
     public function create(): void
     {
-        $db = Database::getInstance();
-
         $sql = "INSERT INTO surveys (title, status, user_id, created_at) VALUES (:title, :status, :user_id, NOW())";
         $params = [
             ':title' => $this->title,
@@ -34,103 +32,60 @@ class Survey
             ':user_id' => $this->userId
         ];
 
-        try {
-            $stmt = $db->getConnection()->prepare($sql);
-            $stmt->execute($params);
+        DatabaseHelper::executeQuery($sql, $params);
 
-            $this->id = $db->getConnection()->lastInsertId();
-        } catch (PDOException $e) {
-            exit("Error: " . $e->getMessage());
-        }
+        $this->id = Database::getInstance()->getConnection()->lastInsertId();
     }
 
     public function update(): void
     {
-        $db = Database::getInstance();
-
         $sql = "UPDATE surveys SET title = :title, status = :status WHERE id = :id";
         $params = [
             ':id' => $this->id,
             ':title' => $this->title,
             ':status' => $this->status
         ];
-        try {
-            $stmt = $db->getConnection()->prepare($sql);
-            $stmt->execute($params);
-        } catch (PDOException $e) {
-            exit("Error: " . $e->getMessage());
-        }
+
+        DatabaseHelper::executeQuery($sql, $params);
     }
 
     public function delete(): void
     {
-        $db = Database::getInstance();
-
         $sql = "DELETE FROM surveys WHERE id = :id";
         $params = [':id' => $this->id];
 
-        try {
-            $stmt = $db->getConnection()->prepare($sql);
-            $stmt->execute($params);
-        } catch (PDOException $e) {
-            exit("Error: " . $e->getMessage());
-        }
+        DatabaseHelper::executeQuery($sql, $params);
     }
 
     public static function getSurveysByUserId(int $userId): array
     {
-        $db = Database::getInstance();
-
         $sql = "SELECT * FROM surveys WHERE user_id = :userId";
         $params = [':userId' => $userId];
 
-        try {
-            $stmt = $db->getConnection()->prepare($sql);
-            $stmt->execute($params);
-
-            return $stmt->fetchAll(PDO::FETCH_CLASS, 'App\\Models\\Survey');
-        } catch (PDOException $e) {
-            exit("Error: " . $e->getMessage());
-        }
+        return DatabaseHelper::executeFetchAll($sql, $params, 'App\Models\Survey');
     }
 
+    /**
+     * @throws NotFoundObjectException
+     */
     public static function getById(int $id): ?Survey
     {
-        $db = Database::getInstance();
-
         $sql = "SELECT * FROM surveys WHERE id = :id";
         $params = [':id' => $id];
 
-        try {
-            $stmt = $db->getConnection()->prepare($sql);
-            $stmt->execute($params);
+        $result = DatabaseHelper::executeFetchObject($sql, $params, 'App\Models\Survey');
 
-            $result = $stmt->fetchObject('App\Models\Survey');
-
-            return ($result !== false) ? $result : null;
-        } catch (PDOException $e) {
-            exit("Error: " . $e->getMessage());
-        }
+        return $result ?? throw new NotFoundObjectException();
     }
 
     public static function getAllSurveys(): ?array
     {
-        $db = Database::getInstance();
-
         $sql = "SELECT * FROM surveys WHERE status = 'published'";
 
-        try {
-            $stmt = $db->getConnection()->prepare($sql);
-            $stmt->execute();
-            $results = $stmt->fetchAll(PDO::FETCH_CLASS, 'App\Models\Survey');
-            return ($results !== false) ? $results : null;
-        } catch (PDOException $e) {
-            exit("Error: " . $e->getMessage());
-        }
+        return DatabaseHelper::executeFetchAll($sql, null, 'App\Models\Survey');
     }
 
-
-    public function setTitle(string $title): void
+public function setTitle(string $title): void
     {
         $this->title = $title;
     }
