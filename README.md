@@ -128,7 +128,7 @@ environment:
 * Finally, add “Xdebug helper” extension in your browser, set breakpoints and start debugging
 
 
-# After install docker #
+# After install and start docker #
 
 1. Please, clone from .env.example to .env and setup settings for database
 2. Run `composer install` for install dependencies for this project 
